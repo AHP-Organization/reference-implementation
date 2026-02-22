@@ -1,0 +1,55 @@
+{
+  "last_updated": "2026-02-22T00:00:00Z",
+  "products": [
+    {
+      "id": "AHP-IMPL-001",
+      "sku": "AHP001",
+      "name": "AHP Server License — Single Site",
+      "description": "Commercial license for running the AHP reference implementation on one domain.",
+      "price_usd": 99.00,
+      "stock": 999,
+      "tags": ["license", "single", "server"],
+      "restock_date": null
+    },
+    {
+      "id": "AHP-IMPL-002",
+      "sku": "AHP002",
+      "name": "AHP Server License — Multi-Site (up to 10)",
+      "description": "Commercial license for deploying AHP across up to 10 domains.",
+      "price_usd": 499.00,
+      "stock": 999,
+      "tags": ["license", "multi", "server"],
+      "restock_date": null
+    },
+    {
+      "id": "AHP-SUPPORT-001",
+      "sku": "SUP001",
+      "name": "AHP Implementation Support — 5 Hours",
+      "description": "Expert implementation support for setting up AHP MODE1, MODE2, or MODE3.",
+      "price_usd": 750.00,
+      "stock": 12,
+      "tags": ["support", "consulting", "implementation"],
+      "restock_date": null
+    },
+    {
+      "id": "AHP-SUPPORT-002",
+      "sku": "SUP002",
+      "name": "AHP Integration Audit",
+      "description": "Full audit of your AHP implementation against the spec, with a written report.",
+      "price_usd": 1500.00,
+      "stock": 5,
+      "tags": ["audit", "compliance", "report"],
+      "restock_date": "2026-03-01"
+    },
+    {
+      "id": "AHP-TRAINING-001",
+      "sku": "TRN001",
+      "name": "AHP Workshop — Half Day",
+      "description": "Live workshop covering AHP protocol design, implementation, and testing for your team.",
+      "price_usd": 2000.00,
+      "stock": 3,
+      "tags": ["training", "workshop", "team"],
+      "restock_date": null
+    }
+  ]
+}

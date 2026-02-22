@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import NodeCache from 'node-cache';
 import { retrieve, getAll, getStats } from './knowledge.js';
 import { createSession, getSession, touchSession, appendHistory, isExhausted } from './sessions.js';
+import { handleMode3Query, handleMode3Async } from './mode3.js';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -28,9 +29,16 @@ const SITE_DESCRIPTION = process.env.SITE_DESCRIPTION || 'a website';
 // ── Capability routing ────────────────────────────────────────────────────────
 
 const CAPABILITY_HANDLERS = {
+  // MODE2
   site_info: handleSiteInfo,
   content_search: handleContentSearch,
   contact: handleContact,
+  // MODE3 — sync (tool use)
+  inventory_check: (args) => handleMode3Query({ capability: 'inventory_check', ...args }),
+  get_quote: (args) => handleMode3Query({ capability: 'get_quote', ...args }),
+  order_lookup: (args) => handleMode3Query({ capability: 'order_lookup', ...args }),
+  // MODE3 — async (human escalation)
+  human_escalation: handleHumanEscalation,
 };
 
 // ── Main handler ──────────────────────────────────────────────────────────────
@@ -83,6 +91,14 @@ export async function handleConverse(req, res) {
     const result = await handler({ query, clarification, context, sessionId });
     const latencyMs = Date.now() - startMs;
 
+    // MODE3 async returns an 'accepted' envelope directly
+    if (result.status === 'accepted') {
+      return res.json(result);
+    }
+
+    const mode = ['inventory_check', 'get_quote', 'order_lookup', 'human_escalation'].includes(capability)
+      ? 'MODE3' : 'MODE2';
+
     const response = {
       status: 'success',
       session_id: sessionId,
@@ -90,9 +106,11 @@ export async function handleConverse(req, res) {
       meta: {
         tokens_used: result._tokens || 0,
         capability_used: capability,
-        mode: 'MODE2',
+        mode,
         cached: result._cached || false,
         latency_ms: latencyMs,
+        tools_used: result._tools_used || [],
+        tool_call_count: result._tool_call_count || 0,
         content_signals: MANIFEST?.content_signals || {},
       },
     };
@@ -100,6 +118,9 @@ export async function handleConverse(req, res) {
     // Clean internal fields
     delete response.response._tokens;
     delete response.response._cached;
+    delete response.response._tools_used;
+    delete response.response._tool_call_count;
+    delete response.response._latency_ms;
 
     appendHistory(sessionId, 'assistant', result.answer || '');
     res.json(response);
@@ -207,6 +228,10 @@ async function handleContact({ context }) {
     answer: `Contact information for ${SITE_NAME}: ${JSON.stringify(contact)}`,
     _tokens: 0,
   };
+}
+
+async function handleHumanEscalation({ query, context, sessionId }) {
+  return handleMode3Async({ capability: 'human_escalation', query, context, sessionId });
 }
 
 // ── Claude integration ────────────────────────────────────────────────────────

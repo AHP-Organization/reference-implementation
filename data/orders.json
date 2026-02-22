@@ -1,0 +1,27 @@
+[
+  {
+    "id": "ORD-2026-001",
+    "email": "test@example.com",
+    "status": "shipped",
+    "placed_at": "2026-02-15T10:30:00Z",
+    "items": [
+      { "product_id": "AHP-IMPL-001", "name": "AHP Server License — Single Site", "quantity": 1, "unit_price_usd": 99.00 }
+    ],
+    "total_usd": 99.00,
+    "tracking": "TRACK-00001",
+    "estimated_delivery": "2026-02-20T00:00:00Z"
+  },
+  {
+    "id": "ORD-2026-002",
+    "email": "dev@acme.com",
+    "status": "processing",
+    "placed_at": "2026-02-21T14:00:00Z",
+    "items": [
+      { "product_id": "AHP-IMPL-002", "name": "AHP Server License — Multi-Site", "quantity": 1, "unit_price_usd": 499.00 },
+      { "product_id": "AHP-SUPPORT-001", "name": "AHP Implementation Support — 5 Hours", "quantity": 1, "unit_price_usd": 750.00 }
+    ],
+    "total_usd": 1249.00,
+    "tracking": null,
+    "estimated_delivery": null
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "tiers": {
+    "individual": {
+      "base_discount": 0,
+      "volume_discounts": [
+        { "min_qty": 3, "discount": 0.05 },
+        { "min_qty": 10, "discount": 0.10 }
+      ]
+    },
+    "business": {
+      "base_discount": 0.10,
+      "volume_discounts": [
+        { "min_qty": 3, "discount": 0.10 },
+        { "min_qty": 10, "discount": 0.20 }
+      ]
+    },
+    "enterprise": {
+      "base_discount": 0.20,
+      "volume_discounts": [
+        { "min_qty": 3, "discount": 0.15 },
+        { "min_qty": 10, "discount": 0.30 }
+      ]
+    }
+  },
+  "promotions": []
+}
