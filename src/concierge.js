@@ -236,13 +236,29 @@ async function handleHumanEscalation({ query, context, sessionId }) {
 // ── Claude integration ────────────────────────────────────────────────────────
 
 async function askClaude({ system, context, query, maxTokens = 500, sessionId }) {
-  const prompt = `Here is the relevant site content:\n\n${context}\n\n---\n\nUser query: ${query}`;
+  const currentTurn = `Here is the relevant site content:\n\n${context}\n\n---\n\nUser query: ${query}`;
+
+  // Build multi-turn messages from session history (if any)
+  let messages;
+  if (sessionId) {
+    const session = getSession(sessionId);
+    if (session && session.history.length > 0) {
+      // Replay prior turns, injecting context only into the first user turn
+      const prior = session.history.slice(0, -1); // exclude the turn we just appended
+      messages = prior.map(({ role, content }) => ({ role, content }));
+      messages.push({ role: 'user', content: currentTurn });
+    } else {
+      messages = [{ role: 'user', content: currentTurn }];
+    }
+  } else {
+    messages = [{ role: 'user', content: currentTurn }];
+  }
 
   const msg = await anthropic.messages.create({
     model: process.env.CLAUDE_MODEL || 'claude-haiku-4-5',
     max_tokens: maxTokens,
     system,
-    messages: [{ role: 'user', content: prompt }],
+    messages,
   });
 
   return {
