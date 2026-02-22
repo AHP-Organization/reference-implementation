@@ -1,0 +1,47 @@
+{
+  "ahp": "0.1",
+  "name": "AHP Reference Implementation",
+  "description": "Live MODE2 reference implementation of the Agent Handshake Protocol. Knowledge base: the AHP specification and documentation.",
+  "modes": ["MODE1", "MODE2"],
+  "endpoints": {
+    "converse": "/agent/converse",
+    "content": "/content/spec.md"
+  },
+  "capabilities": [
+    {
+      "name": "site_info",
+      "description": "General information about the Agent Handshake Protocol project",
+      "mode": "MODE2",
+      "response_types": ["text/answer"]
+    },
+    {
+      "name": "content_search",
+      "description": "Search the AHP specification and documentation by topic or question",
+      "mode": "MODE2",
+      "response_types": ["text/answer"],
+      "accept_fallback": true
+    },
+    {
+      "name": "contact",
+      "description": "Project contact information, GitHub links, and community resources",
+      "mode": "MODE1",
+      "response_types": ["application/data", "text/answer"]
+    }
+  ],
+  "authentication": "none",
+  "rate_limits": {
+    "unauthenticated": {
+      "requests": "30/minute",
+      "token_budget": "5000/session"
+    }
+  },
+  "content_signals": {
+    "ai_train": false,
+    "ai_input": true,
+    "search": true,
+    "attribution_required": true
+  },
+  "async": {
+    "supported": false
+  }
+}
