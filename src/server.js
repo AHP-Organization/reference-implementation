@@ -18,6 +18,10 @@ const SITE_NAME = process.env.SITE_NAME || 'AHP Reference Implementation';
 app.use(cors());
 app.use(express.json({ limit: '8kb' }));
 
+// Serve static content files and llms.txt for MODE1 and token comparison baseline
+app.use('/content', express.static(join(ROOT, 'content'), { index: false }));
+app.use('/llms.txt', express.static(join(ROOT, 'llms.txt')));
+
 // ── Discovery ────────────────────────────────────────────────────────────────
 
 // Serve the AHP manifest
