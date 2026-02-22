@@ -2,7 +2,11 @@
   "ahp": "0.1",
   "name": "AHP Reference Implementation",
   "description": "Live MODE1/MODE2/MODE3 reference implementation of the Agent Handshake Protocol. Demonstrates all three modes including real-time tool use and human escalation.",
-  "modes": ["MODE1", "MODE2", "MODE3"],
+  "modes": [
+    "MODE1",
+    "MODE2",
+    "MODE3"
+  ],
   "endpoints": {
     "converse": "/agent/converse",
     "content": "/content/spec.md"
@@ -12,27 +16,37 @@
       "name": "site_info",
       "description": "General information about the Agent Handshake Protocol project",
       "mode": "MODE2",
-      "response_types": ["text/answer"]
+      "response_types": [
+        "text/answer"
+      ]
     },
     {
       "name": "content_search",
       "description": "Search the AHP specification and documentation by topic or question",
       "mode": "MODE2",
-      "response_types": ["text/answer"],
+      "response_types": [
+        "text/answer"
+      ],
       "accept_fallback": true
     },
     {
       "name": "contact",
       "description": "Project contact information, GitHub links, and community resources",
       "mode": "MODE1",
-      "response_types": ["application/data", "text/answer"]
+      "response_types": [
+        "application/data",
+        "text/answer"
+      ]
     },
     {
       "name": "inventory_check",
       "description": "Check real-time product availability and stock levels",
       "mode": "MODE3",
       "action_type": "query",
-      "response_types": ["application/data", "text/answer"],
+      "response_types": [
+        "application/data",
+        "text/answer"
+      ],
       "accept_fallback": true
     },
     {
@@ -40,7 +54,10 @@
       "description": "Calculate a custom price quote with volume discounts for one or more products",
       "mode": "MODE3",
       "action_type": "query",
-      "response_types": ["application/data", "text/answer"],
+      "response_types": [
+        "application/data",
+        "text/answer"
+      ],
       "accept_fallback": true
     },
     {
@@ -48,7 +65,10 @@
       "description": "Look up an existing order by order ID or email address",
       "mode": "MODE3",
       "action_type": "query",
-      "response_types": ["application/data", "text/answer"],
+      "response_types": [
+        "application/data",
+        "text/answer"
+      ],
       "accept_fallback": true
     },
     {
@@ -56,7 +76,9 @@
       "description": "Escalate a query to a human operator. Use when the question cannot be answered from available data. Responds asynchronously.",
       "mode": "MODE3",
       "action_type": "async",
-      "response_types": ["text/answer"],
+      "response_types": [
+        "text/answer"
+      ],
       "accept_fallback": false
     }
   ],
@@ -76,5 +98,15 @@
   "async": {
     "supported": true,
     "max_eta_seconds": 30
+  },
+  "integrations": {
+    "mcp": {
+      "url": "/mcp",
+      "version": "2024-11-05"
+    },
+    "openapi": {
+      "url": "/openapi.json",
+      "version": "3.1.0"
+    }
   }
 }

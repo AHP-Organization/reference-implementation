@@ -4,6 +4,8 @@ import cors from 'cors';
 import { createRateLimiter } from './ratelimit.js';
 import { handleConverse, handleStatus } from './concierge.js';
 import { loadKnowledge } from './knowledge.js';
+import { handleMCP } from './mcp.js';
+import { generateOpenAPISpec } from './openapi.js';
 import { readFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
@@ -181,6 +183,16 @@ app.get('/', (req, res) => {
 
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', site: SITE_NAME, ahp: '0.1' });
+});
+
+// ── Platform integrations (Appendix D + E) ───────────────────────────────────
+
+// MCP endpoint — JSON-RPC 2.0, compatible with Claude Desktop + Claude API
+app.post('/mcp', rateLimiter, handleMCP);
+
+// OpenAPI spec — auto-generated from manifest, compatible with GPT Actions
+app.get('/openapi.json', (req, res) => {
+  res.json(generateOpenAPISpec(req));
 });
 
 // ── Boot ──────────────────────────────────────────────────────────────────────
