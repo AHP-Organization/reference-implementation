@@ -99,28 +99,27 @@ export async function handleConverse(req, res) {
     const mode = ['inventory_check', 'get_quote', 'order_lookup', 'human_escalation'].includes(capability)
       ? 'MODE3' : 'MODE2';
 
+    // Destructure internal fields out so we don't mutate the cached object
+    const {
+      _tokens, _cached, _tools_used, _tool_call_count, _latency_ms,
+      ...cleanResult
+    } = result;
+
     const response = {
       status: 'success',
       session_id: sessionId,
-      response: result,
+      response: cleanResult,
       meta: {
-        tokens_used: result._tokens || 0,
+        tokens_used: _tokens || 0,
         capability_used: capability,
         mode,
-        cached: result._cached || false,
+        cached: _cached || false,
         latency_ms: latencyMs,
-        tools_used: result._tools_used || [],
-        tool_call_count: result._tool_call_count || 0,
+        tools_used: _tools_used || [],
+        tool_call_count: _tool_call_count || 0,
         content_signals: MANIFEST?.content_signals || {},
       },
     };
-
-    // Clean internal fields
-    delete response.response._tokens;
-    delete response.response._cached;
-    delete response.response._tools_used;
-    delete response.response._tool_call_count;
-    delete response.response._latency_ms;
 
     appendHistory(sessionId, 'assistant', result.answer || '');
     res.json(response);

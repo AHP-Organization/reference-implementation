@@ -17,6 +17,9 @@ export async function loadKnowledge(contentDir) {
   console.log(`[knowledge] Loaded ${kb.length} document(s).`);
 }
 
+const CHUNK_SIZE = 1500;      // chars per chunk
+const CHUNK_OVERLAP = 200;    // overlap between chunks
+
 function walk(dir, rootDir) {
   let entries;
   try {
@@ -36,15 +39,63 @@ function walk(dir, rootDir) {
       const { title, content } = parseFrontmatter(raw);
       const slug = basename(entry, extname(entry));
       const relPath = fullPath.replace(rootDir, '').replace(/\\/g, '/');
-      kb.push({
-        slug,
-        title: title || slug,
-        content,
-        url: relPath.replace(/\.(md|txt)$/, ''),
-        keywords: extractKeywords(content),
-      });
+      const baseUrl = relPath.replace(/\.(md|txt)$/, '');
+
+      // Small docs: single entry. Large docs: chunk by H2 section first, then by size.
+      if (content.length <= CHUNK_SIZE * 2) {
+        kb.push({ slug, title: title || slug, content, url: baseUrl, keywords: extractKeywords(content) });
+      } else {
+        const chunks = chunkDocument(content, title || slug, baseUrl);
+        kb.push(...chunks);
+      }
     }
   }
+}
+
+/**
+ * Chunk a document by H2 headings first, then by character size.
+ * Keeps sections semantically coherent for retrieval.
+ */
+function chunkDocument(content, docTitle, baseUrl) {
+  const sections = content.split(/^(?=## )/m).filter(s => s.trim());
+  const chunks = [];
+
+  for (const section of sections) {
+    const sectionTitle = section.match(/^## (.+)/)?.[1]?.trim() || docTitle;
+    const body = section.replace(/^## .+\n/, '').trim();
+
+    if (body.length <= CHUNK_SIZE) {
+      chunks.push({
+        slug: slugify(`${baseUrl}-${sectionTitle}`),
+        title: `${docTitle} — ${sectionTitle}`,
+        content: section.trim(),
+        url: baseUrl,
+        keywords: extractKeywords(body),
+      });
+    } else {
+      // Sub-chunk large sections with overlap
+      let pos = 0;
+      let part = 0;
+      while (pos < body.length) {
+        const chunk = body.slice(pos, pos + CHUNK_SIZE);
+        chunks.push({
+          slug: slugify(`${baseUrl}-${sectionTitle}-${part}`),
+          title: `${docTitle} — ${sectionTitle} (part ${part + 1})`,
+          content: `## ${sectionTitle}\n\n${chunk}`,
+          url: baseUrl,
+          keywords: extractKeywords(chunk),
+        });
+        pos += CHUNK_SIZE - CHUNK_OVERLAP;
+        part++;
+      }
+    }
+  }
+
+  return chunks.length ? chunks : [{ slug: slugify(baseUrl), title: docTitle, content, url: baseUrl, keywords: extractKeywords(content) }];
+}
+
+function slugify(str) {
+  return str.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 80);
 }
 
 function parseFrontmatter(raw) {
