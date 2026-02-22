@@ -18,6 +18,12 @@ const SITE_NAME = process.env.SITE_NAME || 'AHP Reference Implementation';
 app.use(cors());
 app.use(express.json({ limit: '8kb' }));
 
+// AHP §3.5 — proactive Link header on every response (RFC 8288)
+app.use((req, res, next) => {
+  res.setHeader('Link', '</.well-known/agent.json>; rel="agent-manifest"; type="application/agent+json"');
+  next();
+});
+
 // Serve static content files and llms.txt for MODE1 and token comparison baseline
 app.use('/content', express.static(join(ROOT, 'content'), { index: false }));
 app.use('/llms.txt', express.static(join(ROOT, 'llms.txt')));
