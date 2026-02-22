@@ -65,7 +65,6 @@ app.get('/', (req, res) => {
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>AHP Reference Implementation</title>
-  <link rel="agent-manifest" type="application/agent+json" href="/.well-known/agent.json">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
