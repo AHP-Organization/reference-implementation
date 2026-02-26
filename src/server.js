@@ -22,7 +22,7 @@ app.use(express.json({ limit: '8kb' }));
 
 // AHP §3.5 — proactive Link header on every response (RFC 8288)
 app.use((req, res, next) => {
-  res.setHeader('Link', '</.well-known/agent.json>; rel="agent-manifest"; type="application/agent+json"');
+  res.setHeader('Link', '</.well-known/agent.json>; rel="ahp-manifest"; type="application/agent+json"');
   next();
 });
 

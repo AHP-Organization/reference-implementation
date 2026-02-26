@@ -103,14 +103,14 @@ A site supporting AHP SHOULD inspect the `Accept` header on all requests. If a r
 
 - A `302` redirect to `/.well-known/agent.json`
 - A `200` response containing the manifest directly
-- A `Link` header pointing to the manifest: `Link: </.well-known/agent.json>; rel="agent-manifest"`
+- A `Link` header pointing to the manifest: `Link: </.well-known/agent.json>; rel="ahp-manifest"`
 
 ### 3.3 HTML Link Tag
 
 Sites SHOULD include the following `<link>` tag in HTML pages to enable discovery by traditional crawlers and browser-based agents:
 
 ```html
-<link rel="agent-manifest" href="/.well-known/agent.json" type="application/agent+json">
+<link rel="ahp-manifest" href="/.well-known/agent.json" type="application/agent+json">
 ```
 
 ### 3.4 In-Page Agent Notice
@@ -156,7 +156,7 @@ Sites MAY use `aria-label="AI Agent Notice"` as a semantic hook; visiting agents
 Visiting agents SHOULD attempt discovery in the following order:
 
 1. Check rendered page content for an element with `aria-label="AI Agent Notice"` or class `ahp-notice`
-2. Parse `<link rel="agent-manifest">` from HTML `<head>`
+2. Parse `<link rel="ahp-manifest">` from HTML `<head>`
 3. Check for `Accept: application/agent+json` response header or `Link` header
 4. Fetch `/.well-known/agent.json` directly
 
@@ -831,7 +831,7 @@ AHP is the evolution beyond `llms.txt`. The differences are significant:
 AHP does not deprecate `llms.txt`. A site with an existing `llms.txt` can become AHP MODE1 compliant with zero changes to that file:
 
 1. Add `/.well-known/agent.json` with `modes: ["MODE1"]` and `endpoints.content: "/llms.txt"`
-2. Add the `<link rel="agent-manifest">` tag to HTML pages
+2. Add the `<link rel="ahp-manifest">` tag to HTML pages
 3. Add the in-page agent notice (Section 3.4)
 
 The `llms.txt` file becomes the content source for MODE1. When the site is ready to upgrade to MODE2, the same content can back the conversational endpoint.

@@ -56,14 +56,13 @@ Your site's agent has tools. It can access databases, call APIs, connect to MCP 
 
 ## How discovery works
 
-AHP meets agents wherever they arrive — headless browsers, direct HTTP requests, or crawlers.
+AHP uses three mechanisms, in priority order. Agents SHOULD try them in this sequence:
 
-| Discovery method | How it works |
-|-----------------|--------------|
-| **In-page notice** | An `<section aria-label="AI Agent Notice">` in the page body. Agents using headless browsers read this directly. |
-| **HTML link tag** | `<link rel="agent-manifest">` in `<head>`. Picked up by any agent parsing the DOM. |
-| **Accept header** | Respond to `Accept: application/agent+json` with the manifest or a redirect to it. |
-| **Well-known URI** | `GET /.well-known/agent.json` — the direct path for agents that know to look. |
+| Priority | Discovery method | How it works |
+|----------|-----------------|--------------|
+| **1 — Primary** | **Well-known URI** | `GET /.well-known/agent.json` — one deterministic HTTP request. O(1), always works, no parsing required. |
+| **2 — Incidental** | **HTTP `Link` response header** | `Link: </.well-known/agent.json>; rel="ahp-manifest"` on every HTTP response. Reaches agents already making a request for another purpose. |
+| **3 — Fallback** | **In-page notice** | `<section aria-label="AI Agent Notice">` in the page body. For headless-browser agents that read rendered HTML before inspecting headers. |
 
 ---
 
@@ -82,13 +81,13 @@ AHP meets agents wherever they arrive — headless browsers, direct HTTP request
    }
    ```
 
-2. Add to your HTML `<head>`:
+2. Add the `Link` header to all HTTP responses:
 
-   ```html
-   <link rel="agent-manifest" href="/.well-known/agent.json" type="application/agent+json">
+   ```
+   Link: </.well-known/agent.json>; rel="ahp-manifest"; type="application/agent+json"
    ```
 
-3. Add to your page body:
+3. Optionally add an in-page notice to your HTML body:
 
    ```html
    <section class="ahp-notice" aria-label="AI Agent Notice" style="display:none">
